@@ -1,3 +1,4 @@
+// K번째 괄호 문자열
 // use std::io::{stdin, stdout, Write};
 //
 // fn main() {
