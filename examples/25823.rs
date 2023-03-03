@@ -1,3 +1,4 @@
+// 조합의 합의 합
 use std::io::stdin;
 
 const MOD: u64 = 1000_000_007;
