@@ -1,38 +1,47 @@
+use std::collections::BinaryHeap;
 use std::io::stdin;
-
-const MOD: u64 = 1000_000_007;
 
 fn main() {
     let mut lines = stdin().lines();
-    let m: usize = lines.next().unwrap().unwrap().parse().unwrap();
+    let n: usize = lines.next().unwrap().unwrap().parse().unwrap();
 
-    fn init_or_get_inv(invs: &mut [u64], n: usize) -> u64 {
-        if invs[n] == 0 {
-            invs[n] = ((MOD - MOD / n as u64) * init_or_get_inv(invs, (MOD % n as u64) as usize)) % MOD;
-        }
-        return invs[n];
+    let (mut x_heap, mut y_heap) = (BinaryHeap::<i32>::with_capacity(n), BinaryHeap::<i32>::with_capacity(n));
+    for _ in 0..n {
+        let input = lines.next().unwrap().unwrap();
+        let mut coords = input.split_whitespace();
+        x_heap.push(coords.next().unwrap().parse().unwrap());
+        y_heap.push(coords.next().unwrap().parse().unwrap());
     }
 
-    fn combination(facs: &[u64], fac_invs: &[u64], n: usize, k: usize) -> u64 {
-        let mut ret = (facs[n] * fac_invs[n - k]) % MOD;
-        ret = (ret * fac_invs[k]) % MOD;
-        return ret;
+    let (mut prev_x, mut d_x, mut delta_x, mut prev_y, mut d_y, mut delta_y) = (0, 0, 0, 0, 0, 0);
+    let mut x_heap_iter = x_heap.iter();
+    if let Some(&first) = x_heap_iter.next() {
+        prev_x = first;
+    }
+    for &x in x_heap_iter {
+        delta_x = prev_x - x;
+        d_x = d_x.max((delta_x).abs());
+        println!("{prev_x}");
+        prev_x = x;
+    }
+    let mut y_heap_iter = y_heap.iter();
+    if let Some(&first) = y_heap_iter.next() {
+        prev_y = first;
+    }
+    for &y in y_heap_iter {
+        delta_y = prev_y - y;
+        d_y = d_y.max((delta_y).abs());
+        println!("{prev_y}");
+        prev_y = y;
     }
 
-    let m2 = m * 2;
-    let mut facs = vec![0; m2 + 1];
-    let mut fac_invs = vec![0; m2 + 1];
-    let mut invs = vec![0; m2 + 1];
-    (facs[0], facs[1], fac_invs[0], fac_invs[1], invs[1]) = (1, 1, 1, 1, 1);
-    for i in 2..=m2 {
-        facs[i] = (facs[i - 1] * i as u64) % MOD;
-        fac_invs[i] = (fac_invs[i - 1] * init_or_get_inv(&mut invs, i)) % MOD;
+    if d_x / delta_x.abs() > d_y / delta_y.abs() {
+
+    } else if d_x / delta_x.abs() < d_y / delta_y.abs() {
+
+    }else{
+        if d_x%delta_x.abs() { }
     }
 
-    let mut answer = 0;
-    for i in 3..=m {
-        answer = (answer + combination(&facs, &fac_invs, i * 2, i)) % MOD;
-    }
-
-    println!("{answer}");
+    println!("{} {} {d_x} {} {} {d_y}", prev_x, x_heap.peek().unwrap(), prev_y, y_heap.peek().unwrap());
 }
