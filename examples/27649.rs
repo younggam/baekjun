@@ -1,5 +1,4 @@
 // 토크나이저
-
 use std::io::{stdin, stdout, Write};
 
 fn main() {

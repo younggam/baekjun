@@ -1,5 +1,4 @@
 // 벌레컷(Fail)
-
 use std::io::stdin;
 
 fn main() {

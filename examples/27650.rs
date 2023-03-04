@@ -5,7 +5,7 @@ fn main() {
     let mut lines = stdin().lines();
     let n: usize = lines.next().unwrap().unwrap().parse().unwrap();
 
-    let mut is_prime = vec![true; 5000001];
+    let mut is_prime = vec![true; n + 1];
     let mut primes = Vec::with_capacity(n / 10);
     for i in 2..=n {
         if is_prime[i] {
