@@ -76,10 +76,18 @@ fn main() {
                     }
                 }
                 for m in 0..word_len {
-                    if right == 0 { specials[i * c + j + m] |= 1 << k; }
-                    if diag_up == 0 { specials[(i - m) * c + j + m] |= 1 << k; }
-                    if diag_down == 0 { specials[(i + m) * c + j + m] |= 1 << k; }
-                    if down == 0 { specials[(i + m) * c + j] |= 1 << k; }
+                    if right == 0 {
+                        specials[i * c + j + m] |= 1 << k;
+                    }
+                    if diag_up == 0 {
+                        specials[(i - m) * c + j + m] |= 1 << k;
+                    }
+                    if diag_down == 0 {
+                        specials[(i + m) * c + j + m] |= 1 << k;
+                    }
+                    if down == 0 {
+                        specials[(i + m) * c + j] |= 1 << k;
+                    }
                 }
             }
         }
@@ -89,9 +97,13 @@ fn main() {
     for special in &specials {
         let mut count = 0;
         for i in 0..n {
-            if special & (1 << i) != 0 { count += 1; }
+            if special & (1 << i) != 0 {
+                count += 1;
+            }
         }
-        if count > 1 { answer += 1; }
+        if count > 1 {
+            answer += 1;
+        }
     }
     println!("{answer}");
 }

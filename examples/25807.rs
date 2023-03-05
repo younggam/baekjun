@@ -18,7 +18,9 @@ fn main() {
     let mut i = 0;
     for b in input.split_whitespace() {
         let b: u32 = b.parse().unwrap();
-        if b == 0 { continue; }
+        if b == 0 {
+            continue;
+        }
         let distance = b - prev_b;
         prev_b = b;
         max_distance = max_distance.max(distance);

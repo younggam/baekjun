@@ -25,14 +25,17 @@ impl<'a> PartialOrd for Rate<'a> {
         let rate_other = other.score.p as f64 / other.score.q as f64;
         match rate_self.partial_cmp(&rate_other) {
             Some(Ordering::Equal) => {
-                match self.score.q.partial_cmp(&other.score.q).map(Ordering::reverse) {
-                    Some(Ordering::Equal) => {
-                        self.i.partial_cmp(&other.i)
-                    }
-                    o @ _ => o
+                match self
+                    .score
+                    .q
+                    .partial_cmp(&other.score.q)
+                    .map(Ordering::reverse)
+                {
+                    Some(Ordering::Equal) => self.i.partial_cmp(&other.i),
+                    o @ _ => o,
                 }
             }
-            o @ _ => o
+            o @ _ => o,
         }
     }
 }
@@ -57,11 +60,12 @@ impl<'a> PartialEq<Self> for Diff<'a> {
 
 impl<'a> PartialOrd for Diff<'a> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match (self.score.q - self.score.p).partial_cmp(&(other.score.q - other.score.p)).map(Ordering::reverse) {
-            Some(Ordering::Equal) => {
-                self.i.partial_cmp(&other.i)
-            }
-            o @ _ => o
+        match (self.score.q - self.score.p)
+            .partial_cmp(&(other.score.q - other.score.p))
+            .map(Ordering::reverse)
+        {
+            Some(Ordering::Equal) => self.i.partial_cmp(&other.i),
+            o @ _ => o,
         }
     }
 }
@@ -93,14 +97,8 @@ fn main() {
     let mut rate_set = Vec::with_capacity(n);
     let mut diff_set = Vec::with_capacity(n);
     for (i, score) in scores.iter().enumerate() {
-        rate_set.push(Rate {
-            i,
-            score,
-        });
-        diff_set.push(Diff {
-            i,
-            score,
-        });
+        rate_set.push(Rate { i, score });
+        diff_set.push(Diff { i, score });
     }
     rate_set.sort();
     diff_set.sort();
@@ -110,24 +108,34 @@ fn main() {
     for _ in 0..k {
         let rate = rate_set.last().unwrap();
         let diff = diff_set.last().unwrap();
-        let if_rate = (p_accum as f64 + rate.score.p as f64) / (q_accum as f64 + rate.score.q as f64);
-        let if_diff = (p_accum as f64 + diff.score.p as f64) / (q_accum as f64 + diff.score.q as f64);
+        let if_rate =
+            (p_accum as f64 + rate.score.p as f64) / (q_accum as f64 + rate.score.q as f64);
+        let if_diff =
+            (p_accum as f64 + diff.score.p as f64) / (q_accum as f64 + diff.score.q as f64);
         if if_rate >= if_diff {
             let rate = rate_set.pop().unwrap();
             p_accum += rate.score.p as u64;
             q_accum += rate.score.q as u64;
-            diff_set.remove(diff_set.binary_search(&Diff {
-                i: rate.i,
-                score: rate.score,
-            }).unwrap());
+            diff_set.remove(
+                diff_set
+                    .binary_search(&Diff {
+                        i: rate.i,
+                        score: rate.score,
+                    })
+                    .unwrap(),
+            );
         } else if if_rate < if_diff {
             let diff = diff_set.pop().unwrap();
             p_accum += diff.score.p as u64;
             q_accum += diff.score.q as u64;
-            rate_set.remove(rate_set.binary_search(&Rate {
-                i: diff.i,
-                score: diff.score,
-            }).unwrap());
+            rate_set.remove(
+                rate_set
+                    .binary_search(&Rate {
+                        i: diff.i,
+                        score: diff.score,
+                    })
+                    .unwrap(),
+            );
         }
     }
     println!("{}", p_accum as f64 / q_accum as f64);

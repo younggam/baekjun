@@ -9,7 +9,8 @@ fn main() {
 
     fn init_or_get_inv(invs: &mut [u64], n: usize) -> u64 {
         if invs[n] == 0 {
-            invs[n] = ((MOD - MOD / n as u64) * init_or_get_inv(invs, (MOD % n as u64) as usize)) % MOD;
+            invs[n] =
+                ((MOD - MOD / n as u64) * init_or_get_inv(invs, (MOD % n as u64) as usize)) % MOD;
         }
         return invs[n];
     }

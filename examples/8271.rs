@@ -1,5 +1,8 @@
 // Rooks
-use std::{collections::VecDeque, io::{stdin, stdout, Write}};
+use std::{
+    collections::VecDeque,
+    io::{stdin, stdout, Write},
+};
 
 const W: u8 = 87;
 
