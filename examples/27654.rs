@@ -81,10 +81,11 @@ fn main() {
     let input = lines.next().unwrap().unwrap();
     let mut vars = input.split_whitespace();
     let n = vars.next().unwrap().parse().unwrap();
-    let k = vars.next().unwrap().parse().unwrap();
+    let k: u32 = vars.next().unwrap().parse().unwrap();
 
+    let mut first = 0;
     let mut scores = Vec::with_capacity(n);
-    for _ in 0..n {
+    for i in 0..n {
         let input = lines.next().unwrap().unwrap();
         let mut exam = input.split_whitespace();
         let score = Score {
@@ -92,10 +93,22 @@ fn main() {
             q: exam.next().unwrap().parse().unwrap(),
         };
         scores.push(score);
+        let score = &scores[i];
+        let rate = score.p as f64 / score.q as f64;
+        let first_score = &scores[first];
+        let first_rate = first_score.p as f64 / first_score.q as f64;
+        if first_rate == rate {
+            if score.q > first_score.q {
+                first = i;
+            }
+        } else if first_rate < rate {
+            first = i;
+        }
     }
 
-    let mut rate_set = Vec::with_capacity(n);
-    let mut diff_set = Vec::with_capacity(n);
+    let first = scores.swap_remove(first);
+    let mut rate_set = Vec::with_capacity(n - 1);
+    let mut diff_set = Vec::with_capacity(n - 1);
     for (i, score) in scores.iter().enumerate() {
         rate_set.push(Rate { i, score });
         diff_set.push(Diff { i, score });
@@ -103,9 +116,10 @@ fn main() {
     rate_set.sort();
     diff_set.sort();
 
-    let mut p_accum = 0u64;
-    let mut q_accum = 0u64;
-    for _ in 0..k {
+    println!("!firs {} {}", first.p, first.q);
+    let mut p_accum = first.p as u64;
+    let mut q_accum = first.q as u64;
+    for _ in 0..k - 1 {
         let rate = rate_set.last().unwrap();
         let diff = diff_set.last().unwrap();
         let if_rate =
@@ -124,6 +138,7 @@ fn main() {
                     })
                     .unwrap(),
             );
+            println!("!rate {} {}", rate.score.p, rate.score.q);
         } else if if_rate < if_diff {
             let diff = diff_set.pop().unwrap();
             p_accum += diff.score.p as u64;
@@ -136,6 +151,7 @@ fn main() {
                     })
                     .unwrap(),
             );
+            println!("!diff {} {}", diff.score.p, diff.score.q);
         }
     }
     println!("{}", p_accum as f64 / q_accum as f64);
