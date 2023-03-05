@@ -1,50 +1,58 @@
-// 벌레컷(Fail)
+// 벌레컷
 use std::io::stdin;
 
 fn main() {
     let mut lines = stdin().lines();
     let n: usize = lines.next().unwrap().unwrap().parse().unwrap();
 
-    let mut total = 0;
-    let mut parts = Vec::with_capacity(n);
+    let mut total = 0u64;
+    let mut accums = Vec::with_capacity(n);
     for part in lines.next().unwrap().unwrap().split_whitespace() {
         let part: u64 = part.parse().unwrap();
         total += part;
-        parts.push(part);
+        accums.push(total);
     }
 
     let mut answer = 0u64;
     let mut prev_belly = 0;
-    let mut belly_f_i = parts.len();
-    let mut belly_l_i = parts.len();
-    let mut prev_chest = 0;
+    let mut belly_i = accums.len() - 1;
+    let mut prev_chest = accums[0];
     let mut chest_i = 1;
-    let mut heads = Vec::with_capacity(n);
-    for i in 0..parts.len() {
-        let mut chest = total;
-        let mut head = if i == 0 { 0 } else { heads[i - 1] };
-        head += parts[i];
-        heads.push(head);
-        chest -= head;
-        chest -= prev_belly;
-
+    for i in 0..accums.len() {
+        let head = accums[i];
+        let mut broke = false;
         let mut belly = prev_belly;
-        let prev_belly_i = belly_f_i;
-        let mut belly_i_changed = false;
-        for j in (chest_i + 1..belly_f_i).rev() {
-            belly += parts[j];
-            if head < belly && j < prev_belly_i {
-                belly_i_changed = true;
-                prev_belly = belly - parts[j];
-                belly_f_i = j + 1;
+        for j in (i + 2..=belly_i).rev() {
+            let part = accums[j] - accums[j - 1];
+            belly += part;
+            if head < belly {
+                prev_belly = belly - part;
+                belly_i = j;
+                broke = true;
                 break;
             }
         }
-        if head >= belly {
+        if !broke {
             break;
         }
-
-        for j in (chest_i..belly_f_i) {}
+        broke = false;
+        let mut chest = prev_chest - accums[i];
+        let mut rest = total - head - chest;
+        for j in chest_i..belly_i {
+            let part = accums[j] - accums[j - 1];
+            chest += part;
+            rest -= part;
+            if chest > rest && rest > head {
+                prev_chest = accums[j - 1];
+                chest_i = j;
+                broke = true;
+                break;
+            }
+        }
+        if !broke {
+            break;
+        }
+        answer += (belly_i - chest_i) as u64;
     }
     println!("{answer}");
 }
